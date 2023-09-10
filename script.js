@@ -4,8 +4,16 @@ const listSection = document.querySelectorAll('.list-section');
 const listContainer = document.querySelectorAll('.list');
 const fileSelectorInput = document.querySelectorAll('.file-selector-input');
 const mainSection = document.querySelector('.main');
+const headWord = document.querySelectorAll('.head-text');
 let fd = new FormData();
 let fdmas = [];
+let h1mas = [];
+let txtmas = [];
+const h1Text = document.querySelectorAll('h1');
+
+h1Text.forEach((e) => {
+    h1mas.push(e.innerHTML);
+});
 
 for (let contNum = 0; contNum < cont.length; contNum++) {
     
@@ -72,7 +80,7 @@ for (let contNum = 0; contNum < cont.length; contNum++) {
     // upload file function
     let i = 0;
     function addFile(file){
-    while (!!fd.get('file['+i+']')) {
+        while (!!fd.get('file['+i+']')) {
             i++;
         }
         listSection[contNum].style.display = 'flex';
@@ -97,8 +105,8 @@ for (let contNum = 0; contNum < cont.length; contNum++) {
 
         listContainer[contNum].append(li);
         
-        fd.append('file['+i+']', file);
-        fdmas.push('file['+i+']');
+        fd.append(`${h1mas[contNum]}[${i}]`, file);
+        fdmas.push(`${h1mas[contNum]}[${i}]`);
         i++;
     }
 
@@ -119,17 +127,17 @@ for (let contNum = 0; contNum < cont.length; contNum++) {
     }
 
     function uploadFile() {
+        for(let headNum = 0; headNum < headWord.length; headNum++) {
+            txtmas.push(headWord[headNum].value);
+            fdmas.push(`title[${headNum}]`);
+            fd.append(`title[${headNum}]`, txtmas[headNum]);
+        }
         let http = new XMLHttpRequest();
         http.open('POST', 'sender.php', true);
         http.send(fd);
         for (let key of fdmas) {
-            console.log(key);
             fd.delete(key);
         }
-        console.log(fd.get('file[0]'));
-        console.log(fd.get('file[1]'));
-        console.log(fd.get('file[2]'));
-        console.log(fd.get('file[3]'));
+        txtmas = [];
     }
 }
-
