@@ -5,6 +5,25 @@ const listContainer = document.querySelectorAll('.list');
 const fileSelectorInput = document.querySelectorAll('.file-selector-input');
 const mainSection = document.querySelector('.main');
 const headWord = document.querySelectorAll('.head-text');
+const fileBtnAll = document.querySelectorAll('.file-selector, .btn-submit');
+const forms = document.querySelectorAll('form');
+const formbtn = document.querySelectorAll('.change');
+
+formbtn.forEach(abc => {
+    abc.addEventListener('click', () => {
+        forms.forEach(e => {
+            e.classList.toggle('hidden');
+        })
+    });
+});
+
+
+fileBtnAll.forEach((btns) => {
+    btns.addEventListener('click', (e) => {
+        e.preventDefault();
+    })
+}) 
+
 let fd = new FormData();
 let fdmas = [];
 let h1mas = [];
@@ -18,10 +37,11 @@ h1Text.forEach((e) => {
 for (let contNum = 0; contNum < cont.length; contNum++) {
     
     // upload files with browse button
-    dropArea[contNum].onclick = () => {
+    dropArea[contNum].onclick = (e) => {
         fileSelectorInput[contNum].click();
     }
     fileSelectorInput[contNum].onchange = (e) => {
+        e.preventDefault();
         [...fileSelectorInput[contNum].files].forEach((file) => {
             if(typeValidation(file.type)){
                 addFile(file);
@@ -80,9 +100,6 @@ for (let contNum = 0; contNum < cont.length; contNum++) {
     // upload file function
     let i = 0;
     function addFile(file){
-        while (!!fd.get('file['+i+']')) {
-            i++;
-        }
         listSection[contNum].style.display = 'flex';
         listSection[contNum].style.flexDirection = 'column';
         const li = document.createElement('li');
@@ -141,3 +158,17 @@ for (let contNum = 0; contNum < cont.length; contNum++) {
         txtmas = [];
     }
 }
+
+const savedFiles = document.querySelector('.saved-files');
+
+var request = new XMLHttpRequest();
+
+request.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        console.log(this.responseText);
+        savedFiles.innerHTML = `<li>${this.responseText}</li>`
+    }
+};
+
+request.open('GET', 'upload.php');
+request.send();
