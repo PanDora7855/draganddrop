@@ -7,16 +7,15 @@ const mainSection = document.querySelector('.main');
 const headWord = document.querySelectorAll('.head-text');
 const fileBtnAll = document.querySelectorAll('.file-selector, .btn-submit');
 const forms = document.querySelectorAll('form');
-const formbtn = document.querySelectorAll('.change');
+// const formbtn = document.querySelectorAll('.change');
 
-formbtn.forEach(abc => {
-    abc.addEventListener('click', () => {
-        forms.forEach(e => {
-            e.classList.toggle('hidden');
-        })
-    });
-});
-
+// formbtn.forEach(abc => {
+//     abc.addEventListener('click', () => {
+//         forms.forEach(e => {
+//             e.classList.toggle('hidden');
+//         })
+//     });
+// });
 
 fileBtnAll.forEach((btns) => {
     btns.addEventListener('click', (e) => {
@@ -24,10 +23,11 @@ fileBtnAll.forEach((btns) => {
     })
 }) 
 
-let fd = new FormData();
+
+let fd1 = new FormData();
+let fd2 = new FormData();
 let fdmas = [];
 let h1mas = [];
-let txtmas = [];
 const h1Text = document.querySelectorAll('h1');
 
 h1Text.forEach((e) => {
@@ -40,6 +40,7 @@ for (let contNum = 0; contNum < cont.length; contNum++) {
     dropArea[contNum].onclick = (e) => {
         fileSelectorInput[contNum].click();
     }
+
     fileSelectorInput[contNum].onchange = (e) => {
         e.preventDefault();
         [...fileSelectorInput[contNum].files].forEach((file) => {
@@ -121,9 +122,15 @@ for (let contNum = 0; contNum < cont.length; contNum++) {
         `
 
         listContainer[contNum].append(li);
+        if (contNum == 0 || contNum == 1) {
+            fd1.append(`${h1mas[contNum]}0[${i}]`, file);
+            fdmas.push(`${h1mas[contNum]}0[${i}]`);
+        }
+        else {
+            fd2.append(`${h1mas[contNum]}1[${i}]`, file);
+            fdmas.push(`${h1mas[contNum]}1[${i}]`);
+        }
         
-        fd.append(`${h1mas[contNum]}[${i}]`, file);
-        fdmas.push(`${h1mas[contNum]}[${i}]`);
         i++;
     }
 
@@ -142,20 +149,36 @@ for (let contNum = 0; contNum < cont.length; contNum++) {
         }
         li.remove();
     }
-
-    function uploadFile() {
-        for(let headNum = 0; headNum < headWord.length; headNum++) {
-            txtmas.push(headWord[headNum].value);
-            fdmas.push(`title[${headNum}]`);
-            fd.append(`title[${headNum}]`, txtmas[headNum]);
+    
+    function uploadFile(subm) {
+        let formNum = -1
+        while (subm.parentElement != forms[formNum]) {
+            formNum++;
+        }
+        for(let headNum = 2*formNum; headNum < 2*formNum+2; headNum++) {
+            fdmas.push(`title${formNum}[${headNum}]`);
+            if (formNum == 0) {
+                fd1.append(`title${formNum}[${headNum}]`, headWord[headNum].value);
+            }
+            else {
+                fd2.append(`title${formNum}[${headNum}]`, headWord[headNum].value);
+            }
         }
         let http = new XMLHttpRequest();
         http.open('POST', 'sender.php', true);
-        http.send(fd);
-        for (let key of fdmas) {
-            fd.delete(key);
+        if (formNum == 0) {
+            http.send(fd1);
+            for (let key of fdmas) {
+                fd1.delete(key);
+            }
         }
-        txtmas = [];
+        else {
+            http.send(fd2);
+            for (let key of fdmas) {
+                fd2.delete(key);
+            }
+        }
+        fdmas = [];
     }
 }
 
