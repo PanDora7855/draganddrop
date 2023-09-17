@@ -7,22 +7,17 @@ const mainSection = document.querySelector('.main');
 const headWord = document.querySelectorAll('.head-text');
 const fileBtnAll = document.querySelectorAll('.file-selector, .btn-submit');
 const forms = document.querySelectorAll('form');
-// const formbtn = document.querySelectorAll('.change');
-
-// formbtn.forEach(abc => {
-//     abc.addEventListener('click', () => {
-//         forms.forEach(e => {
-//             e.classList.toggle('hidden');
-//         })
-//     });
-// });
+let evNum;
 
 fileBtnAll.forEach((btns) => {
     btns.addEventListener('click', (e) => {
         e.preventDefault();
     })
 }) 
+
 document.querySelector('.tab').click();
+
+// переключение вкладок
 function openTab(evt, cityName) {
     let i, tabcontent, tablinks;
 
@@ -38,10 +33,16 @@ function openTab(evt, cityName) {
 
     document.querySelector(cityName).style.display = "block";
     evt.currentTarget.className += " active";
+
+    // считывание номера активной вкладки
+    let tabNum = 0;
+    while(tablinks[tabNum] !== evt.target){
+        tabNum++;
+    }
+    evNum = tabNum;
 }
 
-let fd1 = new FormData();
-let fd2 = new FormData();
+let fd = new FormData();
 let fdmas = [];
 let h1mas = [];
 const h1Text = document.querySelectorAll('h1');
@@ -49,6 +50,38 @@ const h1Text = document.querySelectorAll('h1');
 h1Text.forEach((e) => {
     h1mas.push(e.innerHTML);
 });
+
+    
+    // отправка файлов с активной вкладки
+    function uploadFile() {
+        const inputTitles = forms[evNum].querySelectorAll('.head-text');
+        let newFd = new FormData();
+        
+        // перебор массива файлов и поиск файлов на активной странице
+        for(let i of fdmas){
+            if(evNum == i.split('_')[1]){  // поиск по цифре страницы (между подчёркиванием в названии файла)
+                newFd.append(`${i}`, fd.get(i));
+            }
+        }
+
+        // поиск заголовка по странице
+        for(let i = 0; i < inputTitles.length; i++){ 
+            newFd.append(`title_${evNum}_[${i}]`, inputTitles[i].value);
+            fd.delete(`${i}`);
+        }
+        let http = new XMLHttpRequest();
+        http.open('POST', 'sender.php', true);
+        http.send(newFd);
+        
+        // удаление элементов, отправленных по кнопке отправить
+        for(let val in fdmas){ 
+            if(evNum == fdmas[val].split('_')[1]){
+            fd.delete(fdmas[val]);
+            fdmas[val] = "";
+            }
+        }
+        fdmas = fdmas.filter(word => word != "");
+    }
 
 for (let contNum = 0; contNum < cont.length; contNum++) {
     
@@ -138,15 +171,8 @@ for (let contNum = 0; contNum < cont.length; contNum++) {
         `
 
         listContainer[contNum].append(li);
-        if (contNum == 0 || contNum == 1 || contNum == 2) {
-            fd1.append(`${h1mas[contNum]}0[${i}]`, file);
-            fdmas.push(`${h1mas[contNum]}0[${i}]`);
-        }
-        else {
-            fd2.append(`${h1mas[contNum]}1[${i}]`, file);
-            fdmas.push(`${h1mas[contNum]}1[${i}]`);
-        }
-        
+        fd.append(`${h1mas[contNum]}_${evNum}_[${i}]`, file);
+        fdmas.push(`${h1mas[contNum]}_${evNum}_[${i}]`);  
         i++;
     }
 
@@ -156,59 +182,14 @@ for (let contNum = 0; contNum < cont.length; contNum++) {
         return newIcon;
     }
 
-    // delete file from list
+    // delete file from list    
     function deleteItem(num, index, contNumm) {
         let li = document.querySelector(`${num}.${contNumm}`);
-        fd.delete('file['+index+']');
+        fd.delete(`${h1mas[index]}${evNum}[${i}]`);
         if (li.parentElement.childElementCount == 1){
             li.parentElement.parentElement.style.display = 'none';
         }
         li.remove();
     }
-    
-    function uploadFile(subm) {
-        let formNum = -1
-        while (subm.parentElement != forms[formNum]) {
-            formNum++;
-        }
-        for(let headNum = 2*formNum; headNum < 2*formNum+2; headNum++) {
-            fdmas.push(`title${formNum}[${headNum}]`);
-            if (formNum == 0) {
-                fd1.append(`title${formNum}[${headNum}]`, headWord[headNum].value);
-            }
-            else {
-                fd2.append(`title${formNum}[${headNum}]`, headWord[headNum].value);
-            }
-        }
-        let http = new XMLHttpRequest();
-        http.open('POST', 'sender.php', true);
-        if (formNum == 0) {
-            http.send(fd1);
-            for (let key of fdmas) {
-                fd1.delete(key);
-            }
-        }
-        else {
-            http.send(fd2);
-            for (let key of fdmas) {
-                fd2.delete(key);
-            }
-        }
-        fdmas = [];
-        // window.location.replace("http://draganddrop/upload.php");
-    }
 }
 
-// const savedFiles = document.querySelector('.saved-files');
-
-// var request = new XMLHttpRequest();
-
-// request.onreadystatechange = function() {
-//     if (this.readyState == 4 && this.status == 200) {
-//         console.log(this.responseText);
-//         savedFiles.innerHTML = `<li>${this.responseText}</li>`
-//     }
-// };
-
-// request.open('GET', 'upload.php');
-// request.send();
