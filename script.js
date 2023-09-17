@@ -22,7 +22,23 @@ fileBtnAll.forEach((btns) => {
         e.preventDefault();
     })
 }) 
+document.querySelector('.tab').click();
+function openTab(evt, cityName) {
+    let i, tabcontent, tablinks;
 
+    tabcontent = document.querySelectorAll(".tab__content");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+
+    tablinks = document.querySelectorAll(".tab");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    document.querySelector(cityName).style.display = "block";
+    evt.currentTarget.className += " active";
+}
 
 let fd1 = new FormData();
 let fd2 = new FormData();
@@ -122,7 +138,7 @@ for (let contNum = 0; contNum < cont.length; contNum++) {
         `
 
         listContainer[contNum].append(li);
-        if (contNum == 0 || contNum == 1) {
+        if (contNum == 0 || contNum == 1 || contNum == 2) {
             fd1.append(`${h1mas[contNum]}0[${i}]`, file);
             fdmas.push(`${h1mas[contNum]}0[${i}]`);
         }
@@ -179,19 +195,20 @@ for (let contNum = 0; contNum < cont.length; contNum++) {
             }
         }
         fdmas = [];
+        // window.location.replace("http://draganddrop/upload.php");
     }
 }
 
-const savedFiles = document.querySelector('.saved-files');
+// const savedFiles = document.querySelector('.saved-files');
 
-var request = new XMLHttpRequest();
+// var request = new XMLHttpRequest();
 
-request.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-        console.log(this.responseText);
-        savedFiles.innerHTML = `<li>${this.responseText}</li>`
-    }
-};
+// request.onreadystatechange = function() {
+//     if (this.readyState == 4 && this.status == 200) {
+//         console.log(this.responseText);
+//         savedFiles.innerHTML = `<li>${this.responseText}</li>`
+//     }
+// };
 
-request.open('GET', 'upload.php');
-request.send();
+// request.open('GET', 'upload.php');
+// request.send();

@@ -4,7 +4,6 @@
 .header{
     width: 100%;
     max-width: 1000px;
-    min-height: 100px;
     border-radius: 16px;
     margin-bottom: 20px;
     margin-left: 200px;
@@ -17,7 +16,6 @@
 .header input{
     padding: 5px;
     background-color: #fff;
-    width: 100%;
     height: 30px;
     border-radius: 10px;
     width: 100%;
@@ -224,5 +222,41 @@ body{
 }
 
 .hidden {
+    display: none;
+}
+
+/* Для вкладок */
+
+.tab__section {
+    display: flex;
+    flex-direction: row;
+    width: fit-content;
+    margin-left: 200px;
+    margin-bottom: 20px;
+    background-color: #cfdbfa;
+}
+
+.tab__section button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+}
+
+.tab__section button:hover {
+    background-color: white;
+}
+
+
+.tab__section button.active {
+    background-color: #5874C6;
+    color: #fff;
+}
+
+
+.tab__content {
     display: none;
 }
