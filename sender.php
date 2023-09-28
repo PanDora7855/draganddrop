@@ -1,25 +1,12 @@
 <?php
 
-if(!empty($_FILES['request0'])){
-    $targetDir = 'uploads/';
-    foreach($_FILES['request0']['name'] as $key => $name) {
-        $filename = basename($_FILES['request0']['name'][$key]);
-        $targetFilePath = $targetDir.$filename;
-        if(move_uploaded_file($_FILES['request0']['tmp_name'][$key], $targetFilePath)){
-            echo 'File Uploaded</br>';
-        }
-    }
-}
+echo '<h1>POST:</h1><pre>';
+	print_r($_POST);
+echo '</pre>';
 
-if(!empty($_FILES['expert1'])){
-    $targetDir = 'uploads/';
-    foreach($_FILES['expert1']['name'] as $key => $name) {
-        $filename = basename($_FILES['expert1']['name'][$key]);
-        $targetFilePath = $targetDir.$filename;
-        if(move_uploaded_file($_FILES['expert1']['tmp_name'][$key], $targetFilePath)){
-            echo 'File Uploaded</br>';
-        }
-    }
-}
-?>
+echo '<br>';
+
+echo '<h1>FILES:</h1><pre>';
+	print_r($_FILES);
+echo '</pre>';
 

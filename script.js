@@ -1,46 +1,26 @@
-const cont = document.querySelectorAll('.container');
+const cont = document.querySelectorAll('.container-drop');
 const dropArea = document.querySelectorAll('.drop-section');
 const listSection = document.querySelectorAll('.list-section');
 const listContainer = document.querySelectorAll('.list');
 const fileSelectorInput = document.querySelectorAll('.file-selector-input');
-const mainSection = document.querySelector('.main');
-const headWord = document.querySelectorAll('.head-text');
-const fileBtnAll = document.querySelectorAll('.file-selector, .btn-submit');
+const fileBtnAll = document.querySelectorAll('.file-selector, input[type="submit"]');
 const forms = document.querySelectorAll('form');
-let evNum;
+const tabAll = document.querySelectorAll('button[role="tab"]');
+// console.log(tabAll);
+let evNum = 0;
+
+// console.log(cont);
+tabAll.forEach((e) => {
+    e.addEventListener('click', () => {
+        evNum = e.getAttribute('data-event-id') - 4; 
+    })
+});
 
 fileBtnAll.forEach((btns) => {
     btns.addEventListener('click', (e) => {
         e.preventDefault();
     })
-}) 
-
-document.querySelector('.tab').click();
-
-// переключение вкладок
-function openTab(evt, cityName) {
-    let i, tabcontent, tablinks;
-
-    tabcontent = document.querySelectorAll(".tab__content");
-    for (i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].style.display = "none";
-    }
-
-    tablinks = document.querySelectorAll(".tab");
-    for (i = 0; i < tablinks.length; i++) {
-        tablinks[i].className = tablinks[i].className.replace(" active", "");
-    }
-
-    document.querySelector(cityName).style.display = "block";
-    evt.currentTarget.className += " active";
-
-    // считывание номера активной вкладки
-    let tabNum = 0;
-    while(tablinks[tabNum] !== evt.target){
-        tabNum++;
-    }
-    evNum = tabNum;
-}
+});
 
 let fd = new FormData();
 let fdmas = [];
@@ -51,37 +31,65 @@ h1Text.forEach((e) => {
     h1mas.push(e.innerHTML);
 });
 
-    
-    // отправка файлов с активной вкладки
-    function uploadFile() {
-        const inputTitles = forms[evNum].querySelectorAll('.head-text');
-        let newFd = new FormData();
-        
-        // перебор массива файлов и поиск файлов на активной странице
-        for(let i of fdmas){
-            if(evNum == i.split('_')[1]){  // поиск по цифре страницы (между подчёркиванием в названии файла)
-                newFd.append(`${i}`, fd.get(i));
-            }
-        }
-
-        // поиск заголовка по странице
-        for(let i = 0; i < inputTitles.length; i++){ 
-            newFd.append(`title_${evNum}_[${i}]`, inputTitles[i].value);
-            fd.delete(`${i}`);
-        }
-        let http = new XMLHttpRequest();
-        http.open('POST', 'sender.php', true);
-        http.send(newFd);
-        
-        // удаление элементов, отправленных по кнопке отправить
-        for(let val in fdmas){ 
-            if(evNum == fdmas[val].split('_')[1]){
-            fd.delete(fdmas[val]);
-            fdmas[val] = "";
-            }
-        }
-        fdmas = fdmas.filter(word => word != "");
+// delete file from list    
+function deleteItem(num, index, contNumm) {
+    let li = document.querySelector(`${num}.${contNumm}`);
+    contNumm = contNumm.split('-')[1];
+    fd.delete(`${h1mas[contNumm]}_${evNum}_[${index}]`);
+    let elemIndex = fdmas.indexOf(`${h1mas[contNumm]}_${evNum}_[${index}]`);
+    fdmas.splice(elemIndex, 1);
+    if (li.parentElement.childElementCount == 1){
+        li.parentElement.parentElement.style.display = 'none';
     }
+    li.remove();
+}    
+
+// отправка файлов с активной вкладки
+function uploadFile() {
+    console.log(evNum);
+    const inputTitles = forms[evNum].querySelectorAll('.head-text');
+    // console.log(inputTitles[0].name);
+    let newFd = new FormData();
+    
+    // перебор массива файлов и поиск файлов на активной странице
+    for(let i of fdmas){
+        if(evNum == i.split('_')[1]){  // поиск по цифре страницы (между подчёркиванием в названии файла)
+            newName = `${i.split('_')[0]}${i.split('_')[2]}`
+            newFd.append(`${newName}`, fd.get(i));
+        }
+    }
+
+    // поиск заголовка по странице
+    for(let i = 0; i < inputTitles.length; i++){ 
+        newFd.append(`${inputTitles[i].name}`, inputTitles[i].value);
+        // fd.delete(`${i}`);
+    }
+    let http = new XMLHttpRequest();
+    http.open('POST', 'sender.php', true);
+    http.send(newFd);
+    
+    // удаление элементов, отправленных по кнопке отправить
+    for(let val in fdmas){ 
+        if(evNum == fdmas[val].split('_')[1]){
+        fd.delete(fdmas[val]);
+        fdmas[val] = "";
+        }
+    }
+    fdmas = fdmas.filter(word => word != "");
+}
+
+// find icon for file
+function iconSelector(type){
+    newIcon = (type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || type == 'application/vnd.ms-excel') ? 'xls.png' : 'doc.png';
+    return newIcon;
+}
+
+// check the file type
+function typeValidation(type){
+    if(type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || type == 'application/vnd.ms-excel' || type == 'application/msword' || type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
+        return true;
+    }
+}
 
 for (let contNum = 0; contNum < cont.length; contNum++) {
     
@@ -137,15 +145,7 @@ for (let contNum = 0; contNum < cont.length; contNum++) {
                 }
             })
         }
-    }
-
-
-    // check the file type
-    function typeValidation(type){
-        if(type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || type == 'application/vnd.ms-excel' || type == 'application/msword' || type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
-            return true;
-        }
-    }
+    }    
 
     // upload file function
     let i = 0;
@@ -156,7 +156,7 @@ for (let contNum = 0; contNum < cont.length; contNum++) {
         li.classList.add(`num${i}`, `cont-${contNum}`);
         li.innerHTML = `
             <div class="col">
-                <img src="icons/${iconSelector(file.type)}" alt="" width="40" lenght="50">
+                <img src="bs-icons/${iconSelector(file.type)}" alt="" width="40" lenght="50">
             </div>
             <div class="col">
                 <div class="file-name">
@@ -175,21 +175,4 @@ for (let contNum = 0; contNum < cont.length; contNum++) {
         fdmas.push(`${h1mas[contNum]}_${evNum}_[${i}]`);  
         i++;
     }
-
-    // find icon for file
-    function iconSelector(type){
-        newIcon = (type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || type == 'application/vnd.ms-excel') ? 'xls.png' : 'doc.png';
-        return newIcon;
-    }
-
-    // delete file from list    
-    function deleteItem(num, index, contNumm) {
-        let li = document.querySelector(`${num}.${contNumm}`);
-        fd.delete(`${h1mas[index]}${evNum}[${i}]`);
-        if (li.parentElement.childElementCount == 1){
-            li.parentElement.parentElement.style.display = 'none';
-        }
-        li.remove();
-    }
 }
-
