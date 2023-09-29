@@ -6,10 +6,10 @@ const fileSelectorInput = document.querySelectorAll('.file-selector-input');
 const fileBtnAll = document.querySelectorAll('.file-selector, input[type="submit"]');
 const forms = document.querySelectorAll('form');
 const tabAll = document.querySelectorAll('button[role="tab"]');
-// console.log(tabAll);
+console.log(tabAll);
 let evNum = 0;
 
-// console.log(cont);
+console.log(cont);
 tabAll.forEach((e) => {
     e.addEventListener('click', () => {
         evNum = e.getAttribute('data-event-id') - 4; 
@@ -31,19 +31,7 @@ h1Text.forEach((e) => {
     h1mas.push(e.innerHTML);
 });
 
-// delete file from list    
-function deleteItem(num, index, contNumm) {
-    let li = document.querySelector(`${num}.${contNumm}`);
-    contNumm = contNumm.split('-')[1];
-    fd.delete(`${h1mas[contNumm]}_${evNum}_[${index}]`);
-    let elemIndex = fdmas.indexOf(`${h1mas[contNumm]}_${evNum}_[${index}]`);
-    fdmas.splice(elemIndex, 1);
-    if (li.parentElement.childElementCount == 1){
-        li.parentElement.parentElement.style.display = 'none';
-    }
-    li.remove();
-}    
-
+    
 // отправка файлов с активной вкладки
 function uploadFile() {
     console.log(evNum);
@@ -76,19 +64,6 @@ function uploadFile() {
         }
     }
     fdmas = fdmas.filter(word => word != "");
-}
-
-// find icon for file
-function iconSelector(type){
-    newIcon = (type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || type == 'application/vnd.ms-excel') ? 'xls.png' : 'doc.png';
-    return newIcon;
-}
-
-// check the file type
-function typeValidation(type){
-    if(type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || type == 'application/vnd.ms-excel' || type == 'application/msword' || type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
-        return true;
-    }
 }
 
 for (let contNum = 0; contNum < cont.length; contNum++) {
@@ -145,7 +120,15 @@ for (let contNum = 0; contNum < cont.length; contNum++) {
                 }
             })
         }
-    }    
+    }
+
+
+    // check the file type
+    function typeValidation(type){
+        if(type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || type == 'application/vnd.ms-excel' || type == 'application/msword' || type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
+            return true;
+        }
+    }
 
     // upload file function
     let i = 0;
@@ -175,4 +158,21 @@ for (let contNum = 0; contNum < cont.length; contNum++) {
         fdmas.push(`${h1mas[contNum]}_${evNum}_[${i}]`);  
         i++;
     }
+
+    // find icon for file
+    function iconSelector(type){
+        newIcon = (type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || type == 'application/vnd.ms-excel') ? 'xls.png' : 'doc.png';
+        return newIcon;
+    }
+
+    // delete file from list    
+    function deleteItem(num, index, contNumm) {
+        let li = document.querySelector(`${num}.${contNumm}`);
+        fd.delete(`${h1mas[index]}${evNum}[${i}]`);
+        if (li.parentElement.childElementCount == 1){
+            li.parentElement.parentElement.style.display = 'none';
+        }
+        li.remove();
+    }
 }
+
