@@ -6,10 +6,8 @@ const fileSelectorInput = document.querySelectorAll('.file-selector-input');
 const fileBtnAll = document.querySelectorAll('.file-selector, input[type="submit"]');
 const forms = document.querySelectorAll('form');
 const tabAll = document.querySelectorAll('button[role="tab"]');
-console.log(tabAll);
 let evNum = 0;
 
-console.log(cont);
 tabAll.forEach((e) => {
     e.addEventListener('click', () => {
         evNum = e.getAttribute('data-event-id') - 4; 
@@ -25,24 +23,30 @@ fileBtnAll.forEach((btns) => {
 let fd = new FormData();
 let fdmas = [];
 let h1mas = [];
+let filemas = [];
 const h1Text = document.querySelectorAll('h1');
 
 h1Text.forEach((e) => {
     h1mas.push(e.innerHTML);
 });
 
+const fileName = document.querySelectorAll('input[type = "file"]');
+    fileName.forEach((e) => {
+        filemas.push(e.name);
+    });
     
+
 // отправка файлов с активной вкладки
 function uploadFile() {
-    console.log(evNum);
+    
+
     const inputTitles = forms[evNum].querySelectorAll('.head-text');
-    // console.log(inputTitles[0].name);
     let newFd = new FormData();
     
     // перебор массива файлов и поиск файлов на активной странице
     for(let i of fdmas){
         if(evNum == i.split('_')[1]){  // поиск по цифре страницы (между подчёркиванием в названии файла)
-            newName = `${i.split('_')[0]}${i.split('_')[2]}`
+            newName = `${i.split('_')[0]}${i.split('_')[2]}`;
             newFd.append(`${newName}`, fd.get(i));
         }
     }
@@ -154,8 +158,8 @@ for (let contNum = 0; contNum < cont.length; contNum++) {
         `
 
         listContainer[contNum].append(li);
-        fd.append(`${h1mas[contNum]}_${evNum}_[${i}]`, file);
-        fdmas.push(`${h1mas[contNum]}_${evNum}_[${i}]`);  
+        fd.append(`${filemas[contNum]}_${evNum}_[${i}]`, file);
+        fdmas.push(`${filemas[contNum]}_${evNum}_[${i}]`);  
         i++;
     }
 
