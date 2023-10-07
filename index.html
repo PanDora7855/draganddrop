@@ -161,7 +161,7 @@
 														<span>Drag & Drop your files here</span>
 														<span>OR</span>
 														<button class="file-selector">Browse Files</button>
-														<input type="file" name="request" class="file-selector-input" multiple>
+														<input type="file" class="file-selector-input" multiple>
 													</div>
 													<div class="col">
 														<div class="drop-here">Drop Here</div>
@@ -184,7 +184,7 @@
 														<span>Drag & Drop your files here</span>
 														<span>OR</span>
 														<button class="file-selector">Browse Files</button>
-														<input type="file" name="expert" class="file-selector-input" multiple>
+														<input type="file" class="file-selector-input" multiple>
 													</div>
 													<div class="col">
 														<div class="drop-here">Drop Here</div>
@@ -247,7 +247,7 @@
 														<span>Drag & Drop your files here</span>
 														<span>OR</span>
 														<button class="file-selector">Browse Files</button>
-														<input type="file" name="request" class="file-selector-input" multiple>
+														<input type="file" class="file-selector-input" multiple>
 													</div>
 													<div class="col">
 														<div class="drop-here">Drop Here</div>
@@ -305,7 +305,7 @@
 														<span>Drag & Drop your files here</span>
 														<span>OR</span>
 														<button class="file-selector">Browse Files</button>
-														<input type="file" name="request" class="file-selector-input" multiple>
+														<input type="file" class="file-selector-input" multiple>
 													</div>
 													<div class="col">
 														<div class="drop-here">Drop Here</div>
@@ -328,7 +328,7 @@
 														<span>Drag & Drop your files here</span>
 														<span>OR</span>
 														<button class="file-selector">Browse Files</button>
-														<input type="file" name="expert" class="file-selector-input" multiple>
+														<input type="file" class="file-selector-input" multiple>
 													</div>
 													<div class="col">
 														<div class="drop-here">Drop Here</div>
@@ -352,7 +352,7 @@
 													<span>Drag & Drop your files here</span>
 													<span>OR</span>
 													<button class="file-selector">Browse Files</button>
-													<input type="file" name="abc" class="file-selector-input" multiple>
+													<input type="file" class="file-selector-input" multiple>
 												</div>
 												<div class="col">
 													<div class="drop-here">Drop Here</div>
@@ -386,6 +386,33 @@
 
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
 		<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+		
+		<script type="text/javascript">
+			$(document).ready(function() { 
+				$('input[type=file]').on('change', function() {
+					//console.log($(this).attr('name'));
+					var onChangeType = '';
+					switch ($(this).attr('name')) {
+						case 'request[]':
+							onChangeType = 'request';
+							break;
+						case 'expert[]':
+							onChangeType = 'expert';
+							break;
+					}
+					if (($(this).val())){
+						$('button[data-type-reset='+onChangeType+'].fileReset').on('click', function(){
+							$('input[name^='+ onChangeType).val('');
+							$(this).addClass('visually-hidden');
+						});
+						$('button[data-type-reset='+onChangeType+'].fileReset').removeClass('visually-hidden');
+					}
+					else{
+						$('button[data-type-reset='+onChangeType+'].fileReset').addClass('visually-hidden');
+					}
+				});
+			});
+		</script>
 		<script src="script.js"></script>
 	</body>
 </html>

@@ -59,15 +59,16 @@ function uploadFile() {
     let http = new XMLHttpRequest();
     http.open('POST', 'sender.php', true);
     http.send(newFd);
-    
+    console.log(fdmas);
     // удаление элементов, отправленных по кнопке отправить
-    for(let val in fdmas){ 
-        if(evNum == fdmas[val].split('_')[1]){
-        fd.delete(fdmas[val]);
-        fdmas[val] = "";
-        }
-    }
-    fdmas = fdmas.filter(word => word != "");
+    // for(let val in fdmas){ 
+    //     if(evNum == fdmas[val].split('_')[1]){
+    //     fd.delete(fdmas[val]);
+    //     newFd.delete(fdmas[val]);
+    //     fdmas[val] = "";
+    //     }
+    // }
+    // fdmas = fdmas.filter(word => word != "");
 }
 
 for (let contNum = 0; contNum < cont.length; contNum++) {
@@ -172,7 +173,14 @@ for (let contNum = 0; contNum < cont.length; contNum++) {
     // delete file from list    
     function deleteItem(num, index, contNumm) {
         let li = document.querySelector(`${num}.${contNumm}`);
-        fd.delete(`${h1mas[index]}${evNum}[${i}]`);
+        contNumm = contNumm.split('-')[1];
+        fd.delete(`${filemas[contNumm]}_${evNum}_[${i}]`);
+        for(let val in fdmas){
+           if(fdmas[val] == `${filemas[contNumm]}_${evNum}_[${i}]`){
+            fdmas[val] = "";
+           }
+           /////       
+        }
         if (li.parentElement.childElementCount == 1){
             li.parentElement.parentElement.style.display = 'none';
         }
