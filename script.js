@@ -10,7 +10,7 @@ let evNum = 0;
 
 tabAll.forEach((e) => {
     e.addEventListener('click', () => {
-        evNum = e.getAttribute('data-event-id') - 4; 
+        evNum = e.getAttribute('data-event-id') - 4;
     })
 });
 
@@ -21,9 +21,11 @@ fileBtnAll.forEach((btns) => {
 });
 
 let fd = new FormData();
+let fdDel = new FormData();
 let fdmas = [];
 let h1mas = [];
 let filemas = [];
+
 const h1Text = document.querySelectorAll('h1');
 
 h1Text.forEach((e) => {
@@ -31,20 +33,30 @@ h1Text.forEach((e) => {
 });
 
 const fileName = document.querySelectorAll('input[type = "file"]');
-    fileName.forEach((e) => {
-        filemas.push(e.name);
-    });
-    
 
+fileName.forEach((e) => {
+    filemas.push(e.name);
+});
+
+// меняем css у удаляемых файлов
+function readyToDie(e) {
+    e.preventDefault();
+    let presentElement = e.target;
+    //
+    while (!presentElement.classList.contains('ready-to-delete')) {
+        presentElement = presentElement.parentElement;
+    }
+    presentElement.classList.toggle('deleted'); // вкл/выкл класса deleted
+}
+    
 // отправка файлов с активной вкладки
 function uploadFile() {
-    
-
     const inputTitles = forms[evNum].querySelectorAll('.head-text');
+    const findDeletedClass = forms[evNum].querySelectorAll('.deleted');
     let newFd = new FormData();
     
     // перебор массива файлов и поиск файлов на активной странице
-    for(let i of fdmas){
+    for (let i of fdmas){
         if(evNum == i.split('_')[1]){  // поиск по цифре страницы (между подчёркиванием в названии файла)
             newName = `${i.split('_')[0]}${i.split('_')[2]}`;
             newFd.append(`${newName}`, fd.get(i));
@@ -52,14 +64,28 @@ function uploadFile() {
     }
 
     // поиск заголовка по странице
-    for(let i = 0; i < inputTitles.length; i++){ 
+    for (let i = 0; i < inputTitles.length; i++){ 
         newFd.append(`${inputTitles[i].name}`, inputTitles[i].value);
         // fd.delete(`${i}`);
     }
+
+    // добавление удаляемых файлов в FormData 
+    let delNum;
+    let formName;
+    for (let i of findDeletedClass) {
+        // if нужен что бы индексы ключей у разных форм шли с нуля
+        if (formName != i.parentElement.parentElement.parentElement.parentElement.querySelector('input[type = "file"]').name) { // если меняется атрибут name то delNum обнуляется
+            delNum = 0
+        }
+        formName = i.parentElement.parentElement.parentElement.parentElement.querySelector('input[type = "file"]').name; // получение атрибута name
+        newFd.append(formName + `SelectedFilesToDelete[${delNum}]`, i.querySelector('.name').innerHTML);
+        delNum++;
+    }
+
     let http = new XMLHttpRequest();
     http.open('POST', 'sender.php', true);
     http.send(newFd);
-    console.log(fdmas);
+
     // удаление элементов, отправленных по кнопке отправить
     // for(let val in fdmas){ 
     //     if(evNum == fdmas[val].split('_')[1]){
@@ -69,6 +95,7 @@ function uploadFile() {
     //     }
     // }
     // fdmas = fdmas.filter(word => word != "");
+    // fdmas = 
 }
 
 for (let contNum = 0; contNum < cont.length; contNum++) {
@@ -149,9 +176,7 @@ for (let contNum = 0; contNum < cont.length; contNum++) {
             <div class="col">
                 <div class="file-name">
                     <div class="name">${file.name}</div>
-                    
                 </div>
-                
             </div>
             <div class="col" onclick="deleteItem('.num${i}', ${i}, 'cont-${contNum}')">
                 <svg xmlns="http://www.w3.org/2000/svg" class="cross" height="20" width="20"><path d="m5.979 14.917-.854-.896 4-4.021-4-4.062.854-.896 4.042 4.062 4-4.062.854.896-4 4.062 4 4.021-.854.896-4-4.063Z"/></svg>
@@ -175,8 +200,8 @@ for (let contNum = 0; contNum < cont.length; contNum++) {
         let li = document.querySelector(`${num}.${contNumm}`);
         contNumm = contNumm.split('-')[1];
         fd.delete(`${filemas[contNumm]}_${evNum}_[${i}]`);
-        for(let val in fdmas){
-           if(fdmas[val] == `${filemas[contNumm]}_${evNum}_[${i}]`){
+        for (let val in fdmas){
+           if (fdmas[val] == `${filemas[contNumm]}_${evNum}_[${i}]`){
             fdmas[val] = "";
            }
            /////       
@@ -187,4 +212,3 @@ for (let contNum = 0; contNum < cont.length; contNum++) {
         li.remove();
     }
 }
-

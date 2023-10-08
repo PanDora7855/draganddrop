@@ -78,6 +78,7 @@
     position: relative;
 }
 .drop-section div.col:first-child{
+    pointer-events: none;
     opacity: 1;
     visibility: visible;
     transition-duration: 0.2s;
@@ -185,10 +186,6 @@
     max-width: 250px;
     display: inline-block;
 }
-.list-section li .col .file-name span{
-    color: #707EA0;
-    float: right;
-}
 
 .list-section li .col svg.cross{
     fill: #8694d2;
@@ -225,6 +222,69 @@
     background-color: white;
 }
 
-.hidden {
-    display: none;
+.separated-line {
+    margin: 0 35px;
+    height: 5px;
+    border-radius: 12px;
+    background-color: black;
+}
+
+.downloaded-files {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    margin: 0px 35px;
+    padding-bottom: 20px;
+}
+
+.downloaded-files .list-title{
+    font-size: 0.95rem;
+    color: #707EA0;
+}
+.downloaded-files li{
+    display: flex;
+    margin: 15px 0px;
+    padding-top: 4px;
+    padding-bottom: 2px;
+    border-radius: 8px;
+    transition-duration: 0.2s;
+}
+.downloaded-files li:hover{
+    box-shadow: #E3EAF9 0px 0px 4px 0px, #E3EAF9 0px 12px 16px 0px;
+}
+.downloaded-files li .col{
+    flex: .1;
+}
+.downloaded-files li .col:nth-child(1){
+    flex: .15;
+    text-align: center;
+    align-self: center;
+}
+.downloaded-files li .col:nth-child(2){
+    flex: .75;
+    text-align: left;
+    font-size: 0.9rem;
+    color: #3e4046;
+    padding: 8px 10px;
+}
+.downloaded-files li .col:nth-child(2) div.name{
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 250px;
+    display: inline-block;
+}
+
+.downloaded-files li .col svg.cross{
+    fill: #8694d2;
+    background-color: #dee6fd;
+    position: relative;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+}
+
+.deleted {
+    background-color: rgb(255, 90, 90);
 }
