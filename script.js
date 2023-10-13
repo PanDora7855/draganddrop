@@ -121,9 +121,9 @@ for (let contNum = 0; contNum < cont.length; contNum++) {
     dropArea[contNum].ondragover = (e) => {
         e.preventDefault();
         [...e.dataTransfer.items].forEach((item) => {
-            if(typeValidation(item.type)){
+            // if(typeValidation(item.type)){
                 dropArea[contNum].classList.add('drag-over-effect');
-            }
+            // }
         })
     }
     // when file leave the drag area
@@ -154,11 +154,13 @@ for (let contNum = 0; contNum < cont.length; contNum++) {
         }
     }
 
-
     // check the file type
     function typeValidation(type){
         if(type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || type == 'application/vnd.ms-excel' || type == 'application/msword' || type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
             return true;
+        }
+        else {
+            alert('Нужен другой тип файла');
         }
     }
 
