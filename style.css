@@ -186,11 +186,10 @@ a {
     padding: 8px 10px;
 }
 .list-section li .col:nth-child(2) div.name{
-    /* overflow: hidden; */
+    overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     max-width: 250px;
-    display: inline-block;
 }
 
 .list-section li .col svg.cross{
