@@ -8,9 +8,10 @@ const forms = document.querySelectorAll('form');
 const tabAll = document.querySelectorAll('button[role="tab"]');
 let evNum = 0;
 
-tabAll.forEach((e) => {
+tabAll.forEach((e, index) => {
     e.addEventListener('click', () => {
-        evNum = e.getAttribute('data-event-id') - 4;
+        evNum = index;
+        console.log(evNum);
     })
 });
 
@@ -57,6 +58,9 @@ function uploadFile() {
     
     // перебор массива файлов и поиск файлов на активной странице
     for (let i of fdmas){
+        if (fd.get(i).name.split('.').at(-1) != 'doc' && fd.get(i).name.split('.').at(-1) != 'docx') {
+            return alert('есть ошибки');
+        }
         if(evNum == i.split('_')[1]){  // поиск по цифре страницы (между подчёркиванием в названии файла)
             newName = `${i.split('_')[0]}${i.split('_')[2]}`;
             newFd.append(`${newName}`, fd.get(i));
@@ -82,21 +86,106 @@ function uploadFile() {
         delNum++;
     }
 
-    let http = new XMLHttpRequest();
-    http.open('POST', 'sender.php', true);
-    http.send(newFd);
+    // let http = new XMLHttpRequest();
+    // http.open('POST', 'sender.php', true);
+    // http.send(newFd);
+    // for (keys of newFd.entries()) {
+    //     console.log(keys);
+    // }
+    fetch('upload.php', {
+        method: 'POST',
+        body: newFd,
+        // redirect: 'error'
+    })
 
-    // удаление элементов, отправленных по кнопке отправить
-    // for(let val in fdmas){ 
-    //     if(evNum == fdmas[val].split('_')[1]){
-    //     fd.delete(fdmas[val]);
-    //     newFd.delete(fdmas[val]);
-    //     fdmas[val] = "";
+    .then(res => {
+        if (!res.ok) {
+            throw new Error('Bad response');
+        }
+         console.log(res);
+    })
+    // .then(location.href = 'https://google.com')
+    .catch(err => {
+        console.log(err);
+    })
+    // http.onreadystatechange = function() { // listen for state changes
+    //     if (http.readyState == 4 && http.status == 200) { // when completed we can move away
+    //         window.location = "sender.php";
     //     }
     // }
-    // fdmas = fdmas.filter(word => word != "");
-    // fdmas = 
+
+    
+
+
+//     // удаление элементов, отправленных по кнопке отправить
+//     // for(let val in fdmas){ 
+//     //     if(evNum == fdmas[val].split('_')[1]){
+//     //     fd.delete(fdmas[val]);
+//     //     newFd.delete(fdmas[val]);
+//     //     fdmas[val] = "";
+//     //     }
+//     // }
+//     // fdmas = fdmas.filter(word => word != "");
+//     // fdmas = 
 }
+
+// function uploadFile(e) {
+//     return new Promise(function (resolve, reject) {
+//         const inputTitles = forms[evNum].querySelectorAll('.head-text');
+//         const findDeletedClass = forms[evNum].querySelectorAll('.deleted');
+//         let newFd = new FormData();
+        
+//         // перебор массива файлов и поиск файлов на активной странице
+//         for (let i of fdmas){
+//             if(evNum == i.split('_')[1]){  // поиск по цифре страницы (между подчёркиванием в названии файла)
+//                 newName = `${i.split('_')[0]}${i.split('_')[2]}`;
+//                 newFd.append(`${newName}`, fd.get(i));
+//             }
+//         }
+
+//         // поиск заголовка по странице
+//         for (let i = 0; i < inputTitles.length; i++){ 
+//             newFd.append(`${inputTitles[i].name}`, inputTitles[i].value);
+//             // fd.delete(`${i}`);
+//         }
+
+//         // добавление удаляемых файлов в FormData 
+//         let delNum;
+//         let formName;
+//         for (let i of findDeletedClass) {
+//             // if нужен что бы индексы ключей у разных форм шли с нуля
+//             if (formName != i.parentElement.parentElement.parentElement.parentElement.querySelector('input[type = "file"]').name) { // если меняется атрибут name то delNum обнуляется
+//                 delNum = 0
+//             }
+//             formName = i.parentElement.parentElement.parentElement.parentElement.querySelector('input[type = "file"]').name; // получение атрибута name
+//             newFd.append(formName + `SelectedFilesToDelete[${delNum}]`, i.querySelector('.name').innerHTML);
+//             delNum++;
+//         }
+//         let xhr = new XMLHttpRequest();
+//         xhr.open('POST', 'sender.php');
+        
+//         xhr.onload = function () {
+//             if (this.status >= 200 && this.status < 300) {
+//                 resolve(xhr.response);
+//                 //window.location.href = 'https://google.com';
+//                 document.location.replace('https://google.com');
+//             } else {
+//                 reject({
+//                     status: this.status,
+//                     statusText: xhr.statusText
+//                 });
+//             }
+//         };
+//         xhr.onerror = function () {
+//             reject({
+//                 status: this.status,
+//                 statusText: xhr.statusText
+//             });
+//         };
+//         xhr.responseType = 'json';
+//         xhr.send(newFd);
+//     });
+// }
 
 for (let contNum = 0; contNum < cont.length; contNum++) {
     
@@ -108,12 +197,12 @@ for (let contNum = 0; contNum < cont.length; contNum++) {
     fileSelectorInput[contNum].onchange = (e) => {
         e.preventDefault();
         [...fileSelectorInput[contNum].files].forEach((file) => {
-            if(typeValidation(file.type)){
+            // if(typeValidation(file.type)){
                 addFile(file);
                 // fileSelectorInput[contNum].value = "";
-            }
-            else {
-            }
+            // }
+            // else {
+            // }
         })
     }
 
@@ -138,18 +227,18 @@ for (let contNum = 0; contNum < cont.length; contNum++) {
             [...e.dataTransfer.items].forEach((item) => {
                 if(item.kind === 'file'){
                     const file = item.getAsFile();
-                    if(typeValidation(file.type)){
+                    // if(typeValidation(file.type)){
                         addFile(file);
                         // fileSelectorInput[contNum].value = "";
-                    }
+                    // }
                 }
             })
         }else {
             [...e.dataTransfer.files].forEach((file) => {
-                if(typeValidation(file.type)){
+                // if(typeValidation(file.type)){
                     addFile(file);
                     // fileSelectorInput[contNum].value = "";
-                }
+                // }
             })
         }
     }
@@ -187,6 +276,7 @@ for (let contNum = 0; contNum < cont.length; contNum++) {
 
         listContainer[contNum].append(li);
         fd.append(`${filemas[contNum]}_${evNum}_[${i}]`, file);
+        // console.log(`${filemas[contNum]}_${evNum}_[${i}]`, file);
         fdmas.push(`${filemas[contNum]}_${evNum}_[${i}]`);  
         i++;
     }
@@ -201,10 +291,11 @@ for (let contNum = 0; contNum < cont.length; contNum++) {
     function deleteItem(num, index, contNumm) {
         let li = document.querySelector(`${num}.${contNumm}`);
         contNumm = contNumm.split('-')[1];
-        fd.delete(`${filemas[contNumm]}_${evNum}_[${i}]`);
+        fd.delete(`${filemas[contNumm]}_${evNum}_[${index}]`);
         for (let val in fdmas){
-           if (fdmas[val] == `${filemas[contNumm]}_${evNum}_[${i}]`){
-            fdmas[val] = "";
+           if (fdmas[val] == `${filemas[contNumm]}_${evNum}_[${index}]`){
+            // fdmas[val] = "";
+            fdmas.splice(val, 1);
            }
            /////       
         }

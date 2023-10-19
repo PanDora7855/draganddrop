@@ -262,31 +262,32 @@ a {
     text-align: center;
     flex: .1;
 }
-.downloaded-files li .col:nth-child(1){
+.downloaded-files li .col:nth-child(1) {
     flex: .15;
     text-align: center;
     align-self: center;
 }
-.downloaded-files li .col:nth-child(2){
+.downloaded-files li .col:nth-child(2) {
     flex: .75;
     text-align: left;
     font-size: 0.9rem;
     color: #3e4046;
     align-self: center;
 }
-.downloaded-files li .col:nth-child(2) div.name{
+.downloaded-files li .col:nth-child(2) div.name {
+    overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     max-width: 250px;
 }
 
-.downloaded-files li .col svg.cross{
+.downloaded-files li .col svg.cross {
     fill: #8694d2;
     background-color: #dee6fd;
     border-radius: 50%;
 }
 
-.deleted .col:nth-child(2){
+.deleted .col:nth-child(2) {
     /* background-color: rgb(255, 90, 90); */
     text-decoration: line-through double red;
 }
